@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fcf7e9">
+<meta name="description" content="Интерактивная игра по правилам дорожного движения для детей 6–7 лет.">
+<title>Зелёный фонарь — дорожная игра</title>
+<style>
+:root{color-scheme:light;--ink:#183d32;--muted:#486459;--paper:#fcf7e9;--green:#16634a;--line:#dddccd;--white:#fffdf6;--orange:#f6c979;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--paper);color:var(--ink)}
+button,a{-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid #956100;outline-offset:4px}
+h1:focus{outline:none}
+.top,main,footer{width:min(1110px,calc(100% - 56px));margin-inline:auto}
+.top{height:91px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:11px;font-weight:850;font-size:19px;line-height:1.1}
+.brand small{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.16em;margin-top:6px}
+.brand-icon{background:var(--green);color:#dffa9f;border-radius:14px;width:46px;height:46px;display:grid;place-items:center;font-size:26px}
+.plain{border:1px solid #bfc9b9;background:var(--white);border-radius:100px;padding:10px 16px;font-weight:750;font-size:14px;white-space:nowrap}
+.hero{display:grid;grid-template-columns:.89fr 1.11fr;gap:35px;align-items:center;margin:52px 0 27px}
+.tag,.category{display:inline-flex;align-items:center;gap:8px;background:#e6efcd;padding:7px 13px;border-radius:100px;font-size:11px;font-weight:850;letter-spacing:.115em;margin:0 0 13px}
+.tag span{color:#56754c}
+h1{font-size:clamp(38px,5.4vw,74px);line-height:1.02;letter-spacing:-.065em;margin:0;font-weight:900}
+h1 em{color:var(--green);font-style:normal}
+.lead{color:var(--muted);font-size:19px;line-height:1.55;max-width:36ch;margin:20px 0 25px}
+.primary{background:var(--green);color:white;border:0;border-radius:16px;padding:14px 22px;min-height:55px;font-weight:850;font-size:18px;box-shadow:0 4px 0 #0d4935}
+.primary:hover{background:#104f3a}
+.primary span{margin-left:10px}
+.hero-art{border-radius:30px;overflow:hidden;background:#d5e8b6;border:1px solid #bccba5}
+.hero-art svg,.choice svg{display:block;width:100%;height:auto}
+.topics{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 36px}
+.topics span{border:1px solid var(--line);background:var(--white);padding:8px 12px;border-radius:30px;font-size:14px;font-weight:720}
+footer{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:31px;padding:15px 0 22px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+footer a{color:inherit;text-underline-offset:3px}
+.game{max-width:960px;margin:23px auto 0}
+.track{display:flex;gap:10px;align-items:center;margin-bottom:21px}
+.track strong{font-size:13px;white-space:nowrap}
+.meter{height:10px;border-radius:99px;background:#e6e6d8;flex:1;overflow:hidden}
+.meter span{height:100%;display:block;background:#378464;border-radius:99px}
+.game h1,.finish h1{font-size:clamp(29px,4.9vw,51px);letter-spacing:-.047em}
+.prompt{color:var(--muted);font-size:clamp(16px,2.15vw,21px);line-height:1.4;margin:9px 0 16px}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.choice{overflow:hidden;position:relative;display:flex;flex-direction:column;align-items:stretch;padding:0;text-align:left;background:var(--white);border:2px solid #d6ddcb;border-radius:20px;box-shadow:0 4px 0 #e6e3d4;transition:border-color .15s,transform .15s}
+.choice:not(:disabled):hover{border-color:#4c8766;transform:translateY(-2px)}
+.choice:disabled{cursor:default}
+.choice.good{border-color:var(--green);box-shadow:0 4px 0 #9cc3a7}
+.choice.retry{border-color:#aa6936}
+.choice .caption{display:flex;align-items:center;gap:9px;padding:10px 12px;font-weight:830;font-size:clamp(13px,2.3vw,19px);line-height:1.18;min-height:55px;flex:1}
+.number{background:#eeeddf;border-radius:100px;min-width:28px;height:28px;display:grid;place-items:center;font-size:14px}
+.choice.good .number{background:#d9efcf}
+.choice.retry .number{background:#f5e1c8}
+.response{display:flex;align-items:center;gap:16px;justify-content:space-between;margin-top:16px;padding:12px 14px;border-radius:16px;background:#eeeddf}
+.response.ok{background:#e4f1d6}
+.response.again{background:#f7e7d1}
+.response p{margin:0;font-size:15px;line-height:1.4}
+.response p strong{display:block}
+.response .primary{font-size:15px;min-height:44px;padding:10px 13px;white-space:nowrap}
+.finish{margin:42px auto 0;text-align:center;max-width:740px}
+.badge{background:#e2edc1;color:var(--green);width:105px;height:105px;border-radius:35px;display:grid;place-items:center;margin:0 auto 20px;font-size:61px}
+.finish .lead{max-width:48ch;margin:15px auto 22px}
+.recaps{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;text-align:left;margin:0 0 23px}
+.recaps p{background:var(--white);border:1px solid var(--line);padding:12px;margin:0;border-radius:13px;line-height:1.4;font-size:15px}
+@media(max-width:730px){
+.top,main,footer{width:calc(100% - 32px)}
+.top{height:70px}
+.hero{grid-template-columns:1fr;gap:24px;margin-top:27px}
+.hero h1 br{display:none}
+.hero-art{border-radius:19px}
+.hero .lead{margin:13px 0 19px}
+.track{margin-bottom:14px}
+}
+@media(max-width:440px){
+.choices{gap:8px}
+.choice{border-radius:13px}
+.choice .caption{padding:7px 6px;gap:4px;min-height:55px}
+.number{min-width:19px;height:19px;font-size:11px}
+.response{flex-wrap:wrap;gap:7px}
+.recaps{grid-template-columns:1fr}
+.plain{padding:8px 10px;font-size:12px}
+.brand{font-size:17px}
+.brand-icon{width:38px;height:38px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.game-links{width:min(1110px,calc(100% - 32px));margin:12px auto 0;display:flex;flex-wrap:wrap;gap:7px}.game-links a{padding:6px 10px;background:var(--white);border:1px solid var(--line);border-radius:100px;color:var(--ink);text-decoration:none;font-size:13px;font-weight:750}.game-links a[aria-current]{background:#e6efcd}.game-links a:hover{text-decoration:underline}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="brand-icon" aria-hidden="true">✦</span><span>Зелёный фонарь<small>ДОРОЖНАЯ ИГРА</small></span></div>
+  <button type="button" class="plain" id="read" hidden>🔊 Озвучить</button>
+</header>
+<nav class="game-links" aria-label="Выбор игры"><a href="./">Считай-ка!</a><a href="sounds.html">Звуковая мастерская</a><a href="ural.html">Народы Урала</a><a href="pdd.html" aria-current="page">Зелёный фонарь</a></nav>
+<main id="app"></main>
+<template id="home">
+  <section class="hero">
+    <div class="intro"><p class="tag">6–7 ЛЕТ <span>•</span> 12 СИТУАЦИЙ</p>
+      <h1 tabindex="-1">Как поступишь<br> <em>на дороге?</em></h1>
+      <p class="lead">Помоги героям выбрать безопасное действие. Рассмотри две картинки и нажми на ту, где герои поступают правильно.</p>
+      <button type="button" class="primary" data-action="start">Начать игру <span aria-hidden="true">→</span></button>
+    </div>
+    <div class="hero-art"></div>
+  </section>
+  <div class="topics"><span>🚦 Светофор</span><span>🚶 Переход и тротуар</span><span>🌙 Тёмное время</span><span>🚌 Остановка и двор</span></div>
+</template>
+<footer><span>Дорожная игра для дошкольников</span><a href="https://www.consultant.ru/document/cons_doc_LAW_2709/" target="_blank" rel="noopener">ПДД РФ · для взрослых ↗</a></footer>
+<script>
+"use strict";
+
+const situations = [
+  ["Светофор","Красный человечек","Мальчик с мамой подошли к зебре. На пешеходном светофоре горит красный. Как поступить?",
+    ["Перейти на красный","Подождать на тротуаре"],1,
+    "Красный человечек запрещает переход. Остаёмся на тротуаре и ждём зелёного.",
+    "На красный выходить на дорогу опасно. Где можно подождать?", "red"],
+  ["Светофор","Зелёный человечек","Загорелся зелёный. Машины ещё едут. Что сделают мама и мальчик?",
+    ["Проверить, что машины остановились","Сразу шагнуть на дорогу"],0,
+    "На зелёный сначала посмотри по сторонам. Если машины остановились и путь свободен, можно идти со взрослым.",
+    "Зелёный разрешает переход, но машины могут ещё ехать. Что нужно проверить?", "green"],
+  ["Светофор","Зелёный замигал","Мама с мальчиком стоят у перехода. Зелёный человечек замигал. Как лучше поступить?",
+    ["Побежать через дорогу","Дождаться следующего зелёного"],1,
+    "Мигающий зелёный предупреждает о скорой смене сигнала. Если вы ещё на тротуаре, лучше дождаться следующего зелёного.",
+    "Сигнал скоро сменится. Лучше дождаться следующего зелёного, если ещё стоишь на тротуаре.", "blink"],
+  ["Пешеходный переход","Где перейти дорогу?","Магазин прямо напротив. Чуть дальше есть зебра и знак перехода. Куда пойдём?",
+    ["Дойти до зебры","Перейти прямо к магазину"],0,
+    "Если рядом есть пешеходный переход, идём к нему. Зебру помогают найти белые полосы и синий знак.",
+    "Прямо напротив магазина перехода нет. Найди зебру и синий знак.", "zebra"],
+  ["Пешеходный переход","Зебра без светофора","У зебры нет светофора. К переходу подъезжает машина. Что сделаем?",
+    ["Выйти на зебру перед машиной","Остановиться и дождаться"],1,
+    "Перед зеброй остановись. Посмотри по сторонам и переходи со взрослым, когда путь безопасен.",
+    "Белые полосы показывают место перехода. Сначала дождись, пока машина остановится или проедет.", "plain"],
+  ["Тротуар","Прогулка вдоль дороги","Мама и мальчик идут в парк. Рядом с дорогой есть тротуар. Где им идти?",
+    ["Идти по тротуару","Идти по дороге рядом с машинами"],0,
+    "Вдоль дороги идём по тротуару. Держимся подальше от края, где едут машины.",
+    "По дороге едут машины. Найди дорожку для пешеходов.", "walk"],
+  ["Обзор дороги","За припаркованной машиной","У края дороги стоит большой фургон. За ним плохо видно, кто едет. Что сделаем?",
+    ["Выйти на дорогу из-за фургона","Дойти до перехода с хорошим обзором"],1,
+    "Фургон закрывает дорогу от нас, а нас от водителей. Идём к переходу, где дорогу хорошо видно.",
+    "За фургоном можно не заметить машину. Найди место, где дорога хорошо видна.", "van"],
+  ["Тёмное время","Как стать заметнее?","На улице стемнело. Мальчик собирается на прогулку с мамой. Как помочь водителям заметить его?",
+    ["Прикрепить отражатель снаружи","Убрать отражатель в карман"],0,
+    "Закрепи световозвращатель снаружи на одежде или рюкзаке. Он отражает свет фар, и водителю легче тебя заметить.",
+    "В кармане отражатель спрятан. Куда его прикрепить, чтобы на него попал свет фар?", "reflect"],
+  ["Тёмное время","Два перехода вечером","На улице темно. Рядом два перехода. У одного горит фонарь, у другого темно. Куда пойдём?",
+    ["К тёмному переходу","К освещённому переходу"],1,
+    "На освещённом переходе лучше видно дорогу и пешеходов. Перед переходом всё равно смотрим по сторонам.",
+    "В темноте сложнее увидеть машину и пешеходов. Выбери переход под фонарём.", "night"],
+  ["Двор","Мяч укатился","Мяч выкатился со двора на дорогу. Что сделать мальчику?",
+    ["Остановиться и позвать взрослого","Побежать за мячом"],0,
+    "Остановись на тротуаре и позови взрослого. Играть с мячом лучше на площадке подальше от машин.",
+    "На дороге может появиться машина. Останься на тротуаре и попроси взрослого о помощи.", "ball"],
+  ["Остановка","Подъезжает автобус","Автобус ещё едет к остановке. Где мама и мальчик подождут?",
+    ["Выйдут на дорогу навстречу автобусу","Подождут на тротуаре"],1,
+    "Ждём автобус на тротуаре или посадочной площадке. Подходим к дверям после полной остановки.",
+    "Автобус ещё движется. Подожди там, где стоят пешеходы.", "bus"],
+  ["Пешеходный переход","Сирена у перехода","Мама и мальчик стоят на тротуаре. К переходу едет скорая с синей мигалкой и сиреной. Что сделаем?",
+    ["Останемся на тротуаре и пропустим","Начнём переходить перед скорой"],0,
+    "Когда машина едет с мигалкой и сиреной, пропусти её. После этого снова убедись, что переходить безопасно.",
+    "Скорая спешит на помощь. Дай ей проехать, оставаясь на тротуаре.", "siren"]
+];
+
+const app = document.querySelector("#app");
+const read = document.querySelector("#read");
+const voiceAvailable = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+let page = "home";
+let level = 0;
+let selected = -1;
+let complete = false;
+let speakingText = "";
+
+const palette = {
+  day:["#c9e8e5","#d8e9b1","#e5d9b8","#536466","#fff2ca"],
+  night:["#263756","#354d50","#717876","#3b485a","#dce5f4"]
+};
+
+function array(n, draw) {
+  return Array.from({length:n}, (_, i) => draw(i)).join("");
+}
+
+function tree(x, y, night, size = 1) {
+  return `<g transform="translate(${x} ${y}) scale(${size})"><path d="M0 0V-42" stroke="${night ? "#847878" : "#96714e"}" stroke-width="7" stroke-linecap="round"/><path d="M-19-29Q-31-37-17-50Q-18-68 1-66Q14-71 21-55Q35-43 22-31Q10-22-19-29Z" fill="${night ? "#527168" : "#84af68"}"/><path d="M-14-48Q-8-57 0-57" fill="none" stroke="${night ? "#6a8375" : "#a5c77e"}" stroke-width="4" stroke-linecap="round"/></g>`;
+}
+
+function house(x, y, color, night) {
+  return `<g transform="translate(${x} ${y})"><rect x="0" y="-44" width="73" height="45" rx="3" fill="${color}"/><path d="M-6-42 36-72 80-42Z" fill="${night ? "#66738a" : "#bd755a"}"/><path d="M10-32h16v15H10zm37 0h16v15H47z" fill="${night ? "#f4ce86" : "#fff3c6"}"/><path d="M29 0v-23h15V0" fill="${night ? "#4b5362" : "#a57057"}"/></g>`;
+}
+
+function stripes(x, color) {
+  return array(6, i => `<rect x="${x-34}" y="${111+i*15}" width="68" height="9" rx="1.5" fill="${color}"/>`);
+}
+
+function sign(x, y) {
+  return `<g transform="translate(${x} ${y})"><path d="M0 0V-46" stroke="#364d4d" stroke-width="5"/><rect x="-16" y="-62" width="32" height="32" rx="2" fill="#2454a0" stroke="#fff" stroke-width="1.5"/><path d="M0-58 12-35H-12Z" fill="white"/><circle cy="-50" r="2" fill="#263640"/><path d="m-3-36 3-7 5 7m-8-8 3-3 4 4" fill="none" stroke="#263640" stroke-width="2" stroke-linecap="round"/></g>`;
+}
+
+function signal(x, y, mode) {
+  const red = mode === "red";
+  const green = mode === "green" || mode === "blink";
+  return `<g transform="translate(${x} ${y})"><path d="M0 0V-65" stroke="#354943" stroke-width="6"/><rect x="-15" y="-89" width="30" height="55" rx="6" fill="#26352e" stroke="#f8efcf" stroke-width="2"/><circle cy="-74" r="10" fill="${red ? "#77332e" : "#39473d"}"/><circle cy="-49" r="10" fill="${green ? "#215638" : "#39473d"}"/><g fill="none" stroke="${red ? "#ff7663" : "#596257"}" stroke-width="2.4" stroke-linecap="round"><circle cy="-79" r="1.3"/><path d="M0-75v5m-3-4h6m-5 8 2-4 2 4"/></g><g fill="none" stroke="${green ? "#a0f596" : "#596257"}" stroke-width="2.4" stroke-linecap="round"><circle cx="1" cy="-54" r="1.3"/><path d="m-3-47 3-4 4 3m-8 6 3-5 4 1 2 4"/></g>${mode === "blink" ? '<path d="m20-56 5-3m-4 10h6m-7 7 5 3" stroke="#effb9b" stroke-width="3" stroke-linecap="round"/>' : ""}</g>`;
+}
+
+function lamp(x, y, on) {
+  return `<g transform="translate(${x} ${y})">${on ? '<path d="M20-74-35 20H95L39-74Z" fill="#ffe59e" opacity=".25"/>' : ""}<path d="M0 0v-64q0-17 20-17h8" fill="none" stroke="#394c54" stroke-width="5" stroke-linecap="round"/><path d="M19-78q12-13 22 0l2 6H17Z" fill="${on ? "#ffe29a" : "#6c7c8a"}"/></g>`;
+}
+
+function car(x, y, {kind = "car", moving = false, night = false, flip = false, color = "#e08a58"} = {}) {
+  const large = kind === "bus" || kind === "van" || kind === "siren";
+  const wide = kind === "bus" ? 63 : large ? 51 : 42;
+  const height = large ? 37 : 24;
+  return `<g transform="translate(${x} ${y}) scale(${flip ? -1 : 1} 1)">
+    ${night ? `<path d="M${wide-2}-19 ${wide+60}-35 ${wide+60} 1 ${wide-2}-4Z" fill="#f6df93" opacity=".25"/>` : ""}
+    ${moving ? `<path d="M${-wide-18}-17h13m-9 8h10" stroke="#f8efd8" stroke-width="2" stroke-linecap="round"/>` : ""}
+    <ellipse cy="3" rx="${wide+1}" ry="5" fill="#303f41" opacity=".32"/>
+    <rect x="${-wide}" y="-${height}" width="${wide*2}" height="${height}" rx="8" fill="${color}" stroke="#374548" stroke-width="1.6"/>
+    ${large ? array(kind === "bus" ? 5 : 2, i => `<rect x="${wide-20-i*19}" y="-${height-5}" width="15" height="12" rx="2" fill="#9cc1c7"/>`) : '<path d="m-27-22 11-13h33l14 13Z" fill="#a6c9c9" stroke="#394f50" stroke-width="2"/><path d="M1-34v11" stroke="#394f50" stroke-width="2"/>'}
+    <circle cx="${-wide+15}" r="6.6" fill="#243435"/><circle cx="${wide-15}" r="6.6" fill="#243435"/>
+    <circle cx="${-wide+15}" r="2.5" fill="#bec7bc"/><circle cx="${wide-15}" r="2.5" fill="#bec7bc"/>
+    <rect x="${wide-9}" y="-17" width="8" height="5" rx="2.5" fill="#fff1a1"/>
+    ${kind === "siren" ? '<path d="M-31-12h12m-6-6v12" stroke="#d74542" stroke-width="4"/><rect x="-7" y="-44" width="14" height="7" rx="3" fill="#67a9fb"/><path d="m-13-47-5-4m18 3v-7m12 8 5-4" stroke="#a6d9ff" stroke-width="2.7" stroke-linecap="round"/>' : ""}
+  </g>`;
+}
+
+function person(x, y, {child = false, walk = false, night = false, reflector = false} = {}) {
+  const coat = child ? (night ? "#ce9453" : "#eda648") : "#40856e";
+  return `<g transform="translate(${x} ${y}) scale(${child ? .72 : 1})">
+    <ellipse rx="15" ry="4" fill="#344d41" opacity=".22"/>
+    <path d="${walk ? "M-4-22-13-6-18-3M5-22 13-10 17-9" : "M-5-22V-3h-4M5-22V-3h5"}" fill="none" stroke="#334653" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M-12-22-9-42Q0-48 10-42L13-22Z" fill="${coat}" stroke="#425a48" stroke-width="1"/>
+    <path d="${walk ? "M-8-39-17-30m25-9 10 5" : "M-8-39-13-28m21-11 7 8"}" fill="none" stroke="${coat}" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="-14" cy="-29" r="3" fill="#efbc8b"/><circle cx="15" cy="-31" r="3" fill="#efbc8b"/>
+    ${child ? "" : '<path d="M-11-61q-12 5-7 20l7-5Z" fill="#61463c"/>'}
+    <circle cy="-56" r="11" fill="#f3bd8b"/>
+    <path d="M-11-54Q-16-70 0-69Q13-68 11-55L6-59l-5-2-8 4Z" fill="${child ? "#714b32" : "#563b36"}"/>
+    <path d="M3-55h.2m4 3q-2 3-5 2" fill="none" stroke="#493831" stroke-width="1.4" stroke-linecap="round"/>
+    ${reflector ? '<path d="m0-38 2 4 5 1-4 3 1 5-4-2-4 2 1-5-4-3 5-1Z" fill="#fffbb9" stroke="#fff" stroke-width="1.6"/>' : ""}
+  </g>`;
+}
+
+function pair(x, y, opts = {}) {
+  return `<path d="M${x-3} ${y-29}l9 6" stroke="#efbc8b" stroke-width="4" stroke-linecap="round"/>
+    ${person(x-17,y,opts)}${person(x+13,y+2,{...opts,child:true})}`;
+}
+
+function art(scene, safe = true) {
+  const night = scene === "night" || scene === "reflect";
+  const cover = scene === "cover";
+  const [sky, grass, path, road, white] = palette[night ? "night" : "day"];
+  const crossing = !["walk","ball","bus","reflect"].includes(scene);
+  const cx = ["zebra","van"].includes(scene) ? 282 : scene === "night" ? 295 : 207;
+  const crossingNow = !safe && ["red","green","blink","zebra","plain","van","ball","bus","siren","walk"].includes(scene);
+  const x = scene === "night" ? (safe ? 295 : 102) :
+    scene === "zebra" || scene === "van" ? (safe ? cx : 125) : scene === "reflect" ? 224 : 207;
+  const y = crossingNow ? 173 : 248;
+  const hasSignal = cover || ["red","green","blink"].includes(scene);
+  const hasVan = scene === "van";
+  const hasBus = scene === "bus";
+  const hasSiren = scene === "siren";
+  const hasBall = scene === "ball";
+  const carMoving = cover || scene === "red" || scene === "plain" || scene === "blink" || hasBus || hasSiren || (scene === "green" && !safe);
+  const mode = cover ? "green" : scene;
+  const carX = hasBus || hasSiren || scene === "plain" ? 95 : 91;
+  const extraCar = !hasBus && !hasVan && !hasSiren && !hasBall;
+  return `<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <rect width="400" height="260" fill="${grass}"/>
+    <rect width="400" height="83" fill="${sky}"/>
+    ${night ? '<circle cx="335" cy="30" r="15" fill="#ffdfa0"/><circle cx="342" cy="24" r="13" fill="#263756"/><path d="M34 22h4m-2-2v4m149 1h4m-2-2v4m92 14h4m-2-2v4" stroke="#e4ecf5" stroke-width="1.5"/>' : '<circle cx="338" cy="31" r="17" fill="#f9da83"/><path d="M45 25q8-16 17-5 12-10 20 4q8 0 10 6H42Zm177 10q4-9 14-6 6-9 16 1 8 0 11 6Z" fill="#f8f6df" opacity=".85"/>'}
+    <path d="M0 76Q45 56 98 70T209 64T400 76v24H0Z" fill="${night ? "#405761" : "#acc99a"}"/>
+    ${house(55,83,night ? "#55667b" : "#e3ac82",night)}
+    ${house(135,83,night ? "#59677b" : "#efcb87",night)}
+    ${scene === "zebra" ? '<g><rect x="94" y="38" width="70" height="49" rx="3" fill="#f0c987"/><path d="M91 50h76l-8-11H99Z" fill="#a85a45"/><path d="M97 54h26v19H97zm33 0h22v33h-22z" fill="#8ac0ba"/><text x="129" y="33" text-anchor="middle" fill="#284d44" font-family="system-ui,sans-serif" font-weight="800" font-size="10">МАГАЗИН</text></g>' : ""}
+    ${tree(28,89,night,.83)}${tree(238,87,night,.77)}${tree(369,90,night,1)}
+    <rect y="88" width="400" height="20" fill="${path}"/>
+    <rect y="106" width="400" height="101" fill="${road}"/>
+    <path d="M0 106H400M0 206H400" stroke="${night ? "#9ca3a2" : "#faf0ce"}" stroke-width="3"/>
+    <path d="M0 156H400" stroke="${white}" stroke-width="2" stroke-dasharray="18 15" opacity=".66"/>
+    <path d="M0 210H400V252H0Z" fill="${path}"/>
+    <path d="M0 231H400" stroke="${night ? "#929994" : "#c3b592"}" stroke-width="1" opacity=".55"/>
+    ${array(9,i => `<path d="M${i*46} 251v8m5-6 2 5" stroke="${night ? "#648171" : "#97af74"}" stroke-width="1.7" stroke-linecap="round"/>`)}
+    ${crossing ? stripes(cx,white) : ""}
+    ${scene === "night" ? stripes(102,white) : ""}
+    ${crossing ? sign(cx+45,232) : ""}
+    ${hasSignal ? signal(cx-51,232,mode) : ""}
+    ${scene === "night" ? lamp(60,213,false)+lamp(247,212,true) : ""}
+    ${scene === "reflect" ? lamp(295,211,true) : ""}
+    ${hasBus ? '<g transform="translate(279 222)"><path d="M0 0v-48" stroke="#405450" stroke-width="5"/><rect x="-13" y="-64" width="26" height="25" rx="3" fill="#29569d" stroke="white" stroke-width="1.5"/><rect x="-8" y="-59" width="16" height="12" rx="2" fill="white"/><path d="M-5-56h10m-10 4h10" stroke="#29569d" stroke-width="2"/></g>' : ""}
+    ${hasBall ? '<g><circle cx="233" cy="152" r="11" fill="#e06e56" stroke="#f9df9b" stroke-width="2"/><path d="M225 146q11 4 14 14m-10-18q-2 12 10 14" fill="none" stroke="#f9df9b" stroke-width="2"/></g>' : ""}
+    ${extraCar ? car(329,139,{flip:true,night,color:"#80a9ae",moving:carMoving && scene !== "plain"}) : ""}
+    ${hasVan ? car(322,139,{flip:true,moving:true,color:"#80a9ae"}) + car(66,194,{kind:"van",color:"#e7c28e"}) : car(carX,195,{kind:hasBus ? "bus" : hasSiren ? "siren" : "car",moving:carMoving,night,color:hasSiren ? "#f6f0de" : hasBus ? "#d4a945" : "#de8968"})}
+    ${scene === "reflect" ? `<g transform="translate(325 177)"><circle r="37" fill="#f9eccb" stroke="#ffe29a" stroke-width="3"/><path d="M-23-24-12-29H12l11 5 6 21-10 4v24h-38V1l-10-4Z" fill="#ca8643"/>${safe ? '<path d="m0-18 3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1Z" fill="#fffbd2" stroke="white" stroke-width="2"/><path d="M-17-13h-5m35 0h5M0-23v-4" stroke="#fffbd2" stroke-width="2" stroke-linecap="round"/>' : '<path d="m0-5 2 5 6 1-4 4 1 5-5-2-5 2 1-5-4-4 6-1Z" fill="#fffbd2"/><path d="M-11 3h22v12q-11 8-22 0Z" fill="#a96d37" stroke="#885330" stroke-width="1.5"/>'}</g>` : ""}
+    ${hasBall ? person(x,y,{child:true,walk:crossingNow}) : pair(x,y,{night,walk:crossingNow || cover || scene === "walk" || (safe && ["van","zebra"].includes(scene)),reflector:night && (scene !== "reflect" || safe)})}
+    ${safe && scene === "green" ? '<path d="M184 175h-19m4-4-5 4 5 4m62-4h19m-4-4 5 4-5 4" fill="none" stroke="#fff3bd" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>' : ""}
+    ${hasBall && safe ? '<path d="m231 204 4-4m0 11 6-2m-9 9 5 2" stroke="#315c4e" stroke-width="2.5" stroke-linecap="round"/>' : ""}
+    ${cover ? '<g transform="translate(307 69) rotate(-6)"><rect width="82" height="34" rx="11" fill="#fff4d3" stroke="#4a6b58" stroke-width="1.6"/><path d="M17 10l2 5 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="#307152"/><text x="30" y="22" fill="#274e3d" font-family="system-ui,sans-serif" font-weight="850" font-size="11">СТАРТ!</text></g>' : ""}
+  </svg>`;
+}
+
+function say(message) {
+  if (!voiceAvailable) return;
+  window.speechSynthesis.cancel();
+  const speech = new SpeechSynthesisUtterance(message);
+  speech.lang = "ru-RU";
+  speech.rate = 0.9;
+  const russianVoice = window.speechSynthesis.getVoices().find(voice => /^ru(?:[-_]|$)/i.test(voice.lang));
+  if (russianVoice) speech.voice = russianVoice;
+  window.speechSynthesis.speak(speech);
+}
+
+function renderHome() {
+  app.replaceChildren(document.querySelector("#home").content.cloneNode(true));
+  app.querySelector(".hero-art").innerHTML = art("cover");
+  read.hidden = true;
+}
+
+function renderLevel() {
+  const [topic,title,prompt,choices,answer,rule,retry,scene] = situations[level];
+  const progress = level + Number(complete);
+  speakingText = selected < 0 ?
+    `${title}. ${prompt} Первая картинка. ${choices[0]}. Вторая картинка. ${choices[1]}.` :
+    complete ? `Верно! ${rule}` : `Попробуй ещё. ${retry}`;
+  read.hidden = !voiceAvailable;
+  app.innerHTML = `<section class="game" aria-labelledby="scene-title">
+    <div class="track"><strong>Ситуация ${level + 1} из ${situations.length}</strong><div class="meter" role="progressbar" aria-label="Пройдено ситуаций" aria-valuenow="${progress}" aria-valuemax="${situations.length}"><span style="width:${100*progress/situations.length}%"></span></div></div>
+    <p class="category">${topic}</p><h1 id="scene-title" tabindex="-1">${title}</h1><p class="prompt">${prompt}</p>
+    <div class="choices">${choices.map((label,i) => `<button type="button" class="choice ${selected === i ? (complete ? "good" : "retry") : ""}" data-choice="${i}" ${complete ? "disabled" : ""}>
+      ${art(scene,i === answer)}<span class="caption"><span class="number" aria-hidden="true">${selected === i ? (complete ? "✓" : "↻") : i+1}</span>${label}</span>
+      </button>`).join("")}</div>
+    <div class="response ${selected < 0 ? "" : complete ? "ok" : "again"}">
+      <p role="status">${selected < 0 ? "Выбери одну картинку." : `<strong>${complete ? "Верно!" : "Попробуй ещё."}</strong>${complete ? rule : retry}`}</p>
+      ${complete ? `<button type="button" class="primary" data-action="next">${level === situations.length-1 ? "Завершить" : "Дальше"} <span aria-hidden="true">→</span></button>` : ""}
+    </div></section>`;
+}
+
+function renderFinish() {
+  read.hidden = true;
+  app.innerHTML = `<section class="finish">
+    <div class="badge" aria-hidden="true">✦</div><h1 tabindex="-1">Маршрут пройден!</h1>
+    <p class="lead">Ты нашёл безопасное решение во всех ${situations.length} ситуациях. Что запомнилось больше всего?</p>
+    <div class="recaps">
+      <p>🚦 <strong>Красный — ждём.</strong> На зелёный сначала смотрим по сторонам.</p>
+      <p>🚶 <strong>Ищем переход.</strong> Останавливаемся у края и проверяем дорогу.</p>
+      <p>🌙 <strong>В темноте важно быть заметным.</strong> Прикрепляем отражатель снаружи.</p>
+      <p>⚽ <strong>Мяч на дороге?</strong> Остаёмся на тротуаре и зовём взрослого.</p>
+    </div><button type="button" class="primary" data-action="start">Сыграть ещё раз <span aria-hidden="true">↻</span></button>
+  </section>`;
+}
+
+read.addEventListener("click", () => say(speakingText));
+app.addEventListener("click", event => {
+  const button = event.target.closest("button");
+  if (!button) return;
+  if (voiceAvailable) window.speechSynthesis.cancel();
+  if (button.dataset.choice !== undefined && page === "game" && !complete) {
+    selected = Number(button.dataset.choice);
+    complete = selected === situations[level][4];
+    renderLevel();
+    const focusTarget = complete ? '[data-action="next"]' : `[data-choice="${selected}"]`;
+    app.querySelector(focusTarget).focus({preventScroll:true});
+    return;
+  }
+  if (button.dataset.action === "start") {
+    page = "game";
+    level = 0;
+    selected = -1;
+    complete = false;
+    renderLevel();
+  } else if (button.dataset.action === "next" && complete) {
+    level++;
+    selected = -1;
+    complete = false;
+    if (level === situations.length) {
+      page = "finish";
+      renderFinish();
+    } else {
+      renderLevel();
+    }
+  } else {
+    return;
+  }
+  app.querySelector("h1").focus({preventScroll:true});
+  window.scrollTo(0,0);
+});
+
+renderHome();
+
+</script>
+</body>
+</html>
